@@ -63,7 +63,7 @@ class tofdata:
             
             
 
-    def calculateCounts(self, threshold):
+    def getCounts(self, threshold):
         sig=self.getSIGNAL()
         t=self.getTOF()
         maxIdx=np.argmax(sig)
@@ -82,15 +82,25 @@ class tofdata:
         tLeftThr=tLeft[sigLeft<maxVal*threshold]
         tRightThr=tRight[sigRight<maxVal*threshold]
 
-        print(tLeftThr[-1], tRightThr[0])
-        plt.figure()
-        plt.plot(t, sig)
-        plt.plot([tLeftThr[-1],tLeftThr[-1]], [0, maxVal], '-k')
-        plt.plot([tRightThr[0],tRightThr[0]], [0, maxVal], '-k')
-        plt.show()
+        t1=tLeftThr[-1]
+        t2=tRightThr[0]
+
+        idx1=np.argwhere(t==t1)[0][0]
+        idx2=np.argwhere(t==t2)[0][0]        
         
+        tRange=t[idx1:idx2+1]
+        sigRange=sig[idx1:idx2+1]    
+
+        fig, ax = plt.subplots()
+        ax.plot(t,sig)
+        ax.fill(tRange,sigRange, 'r', alpha=0.3)
+        plt.show()
 
 
+        ## Calculate Counts
+        counts=np.trapz(sigRange,tRange) /1.6e-19
+        
+        return counts
      
     def plotSignal(self):
         plt.figure()
@@ -112,7 +122,7 @@ if __name__ == '__main__':
     
 
     td.plotSignal()
-    td.calculateCounts(0.2)
+    print(td.getCounts(0.2))
     # td.plotSignal()
     
     
