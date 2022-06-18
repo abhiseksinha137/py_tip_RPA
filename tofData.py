@@ -73,13 +73,20 @@ class tofdata:
         plt.plot(t[maxIdx], sig[maxIdx], 'o')
         sigLeft=sig[0:maxIdx] ; tLeft=t[0:maxIdx]
         sigRight=sig[maxIdx+1:len(sig)];  tRight=t[maxIdx+1:len(sig)]
-        plt.show()
+        # plt.show()
         
+        # plt.figure()
+        # plt.plot(tLeft,sigLeft)
+        # plt.plot(tRight,sigRight)
+        
+        tLeftThr=tLeft[sigLeft<maxVal*threshold]
+        tRightThr=tRight[sigRight<maxVal*threshold]
+
+        print(tLeftThr[-1], tRightThr[0])
         plt.figure()
-        plt.plot(tLeft,sigLeft)
-        plt.plot(tRight,sigRight)
-        
-        
+        plt.plot(t, sig)
+        plt.plot([tLeftThr[-1],tLeftThr[-1]], [0, maxVal], '-k')
+        plt.plot([tRightThr[0],tRightThr[0]], [0, maxVal], '-k')
         plt.show()
         
 
@@ -105,7 +112,7 @@ if __name__ == '__main__':
     
 
     td.plotSignal()
-    td.calculateCounts(0.1)
+    td.calculateCounts(0.2)
     # td.plotSignal()
     
     
