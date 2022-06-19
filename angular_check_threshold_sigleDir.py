@@ -6,11 +6,19 @@ from tofData import tofdata
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 pi=np.pi
 plt.close('all')
 
 dirPath='E:/dataAnalysis/tip RPA/new/20220519/G/TipVerticalScan/20220519_G_run1/'
+imageSavePath=dirPath+'tofImages/'
+
+try:
+    os.mkdir(imageSavePath)
+except:
+    pass
+    
 settings=pd.read_csv(dirPath+'settings.csv')
 settings=settings.sort_values(by='Angle')
 fileNames=settings['FileName'].values
@@ -34,7 +42,7 @@ for i,fileName in enumerate(fileNames):
     figt, axt = td.plotSignal()
     plt.figure(figt)
     plt.xlim(0.75e-6, 1.25e-6)
-    figt.savefig(dirPath+'tofImages/'+ str(Angle)+'.png')   
+    figt.savefig(imageSavePath+ str(Angle)+'.png')   
     plt.close(figt)
     print(i)
     
