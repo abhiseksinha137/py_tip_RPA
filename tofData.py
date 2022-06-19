@@ -13,10 +13,11 @@ import matplotlib.pyplot as plt
 
 class tofdata:
     # The class is initialized with the path to the csv file
-    def __init__(self, dataPathVal, level_empty_data=True):
+    def __init__(self, dataPathVal, level_empty_data=True, threshold=0.15):
         self.dataPath=dataPathVal
         self.readData()
         self.invertSignal(level_empty_data)
+        self.counts=self.calcuateCounts(threshold)
         
     def readData(self):
         self.data=pd.read_csv(self.dataPath)
@@ -25,7 +26,8 @@ class tofdata:
         self.signal=self.data['Signal'].values.astype(float)
         self.trigger=self.data['Trigger'].values.astype(float)
         
-        
+    def getCounts(self):
+        return self.counts
         
     def getData(self):
         return self.data.values.astype(float)
@@ -63,21 +65,14 @@ class tofdata:
             
             
 
-    def getCounts(self, threshold):
+    def calcuateCounts(self, threshold):
         sig=self.getSIGNAL()
         t=self.getTOF()
         maxIdx=np.argmax(sig)
         maxVal=np.max(sig)
         
-
-        plt.plot(t[maxIdx], sig[maxIdx], 'o')
         sigLeft=sig[0:maxIdx] ; tLeft=t[0:maxIdx]
         sigRight=sig[maxIdx+1:len(sig)];  tRight=t[maxIdx+1:len(sig)]
-        # plt.show()
-        
-        # plt.figure()
-        # plt.plot(tLeft,sigLeft)
-        # plt.plot(tRight,sigRight)
         
         tLeftThr=tLeft[sigLeft<maxVal*threshold]
         tRightThr=tRight[sigRight<maxVal*threshold]
@@ -91,29 +86,30 @@ class tofdata:
         tRange=t[idx1:idx2+1]
         sigRange=sig[idx1:idx2+1]    
 
-        fig, ax = plt.subplots()
-        ax.plot(t,sig)
-        ax.fill(tRange,sigRange, 'r', alpha=0.3)
-        plt.show()
+        
 
 
         ## Calculate Counts
         counts=np.trapz(sigRange,tRange) /1.6e-19
         
+        self.tRange=tRange
+        self.sigRange=sigRange
         return counts
      
-    def plotSignal(self):
-        plt.figure()
-        plt.plot(self.getTOF(), self.getSIGNAL())
+    def plotSignal(self, showThreshold=True):
+        fig, ax = plt.subplots()
+        ax.plot(self.getTOF(),self.getSIGNAL(), 'b')
+        if showThreshold:
+            ax.fill(self.tRange, self.sigRange, 'r', alpha=0.3)
         plt.xlabel('TOF (sec)')
         plt.ylabel('Signal (Volts)')
-        # plt.show()
+        plt.show()
     
 if __name__ == '__main__':
     plt.close('all')
     dataPath='E:/dataAnalysis/tip RPA/20220519/G/TipHorizontalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_0.00E+0deg.txt'
     # dataPath='zeroData.txt'
-    td=tofdata(dataPath, level_empty_data=False)
+    td=tofdata(dataPath, level_empty_data=False, threshold=0.1)
     t=td.getTOF()
     s=td.getSIGNAL()
     # print(td.getCounts())
@@ -122,7 +118,6 @@ if __name__ == '__main__':
     
 
     td.plotSignal()
-    print(td.getCounts(0.2))
     # td.plotSignal()
     
     
