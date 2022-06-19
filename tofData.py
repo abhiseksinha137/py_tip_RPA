@@ -49,8 +49,7 @@ class tofdata:
         ## first get the index of the min
         t=self.getTOF()
         sig=self.getSIGNAL()
-        minIdx=np.argmax(sig)
-
+        minIdx=np.argmin(sig)
         pad=1000
         if minIdx<pad or minIdx>len(t)-pad:   # empty signal
             self.isEmpty=True
@@ -115,12 +114,13 @@ class tofdata:
     
 if __name__ == '__main__':
     plt.close('all')
-    # dataPath='E:/dataAnalysis/tip RPA/20220519/G/TipHorizontalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_0.00E+0deg.txt'
-    dataPath='zeroData.txt'
-    td=tofdata(dataPath, level_empty_data=True, threshold=0.1)
+    dataPath='E:/dataAnalysis/tip RPA/20220519/G/TipHorizontalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_0.00E+0deg.txt'
+    # dataPath='E:/dataAnalysis/tip RPA/new/20220519/G/TipVerticalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_1.76E+2deg.txt'
+    # dataPath='zeroData.txt'
+    td=tofdata(dataPath, level_empty_data=False, threshold=0.1)
     t=td.getTOF()
     s=td.getSIGNAL()
-    print(td.getCounts())
+    print('counts =',td.getCounts())
     # plt.plot(s)
 
     
