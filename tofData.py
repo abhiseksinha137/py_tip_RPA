@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 class tofdata:
     # The class is initialized with the path to the csv file
     def __init__(self, dataPathVal, level_empty_data=True, threshold=0.15):
+        self.isEmpty=False
         self.dataPath=dataPathVal
         self.readData()
         self.invertSignal(level_empty_data)
@@ -51,7 +52,8 @@ class tofdata:
         minIdx=np.argmax(sig)
 
         pad=1000
-        if minIdx<pad or minIdx>len(t)-pad:
+        if minIdx<pad or minIdx>len(t)-pad:   # empty signal
+            self.isEmpty=True
             if level_empty_data:   # if you want to level an empty signal
                 self.signal=np.zeros(np.shape(self.getSIGNAL()))
             else:
@@ -64,38 +66,44 @@ class tofdata:
             self.signal=-self.getSIGNAL()
             
             
-
+    #Region
+    
     def calcuateCounts(self, threshold):
-        sig=self.getSIGNAL()
-        t=self.getTOF()
-        maxIdx=np.argmax(sig)
-        maxVal=np.max(sig)
-        
-        sigLeft=sig[0:maxIdx] ; tLeft=t[0:maxIdx]
-        sigRight=sig[maxIdx+1:len(sig)];  tRight=t[maxIdx+1:len(sig)]
-        
-        tLeftThr=tLeft[sigLeft<maxVal*threshold]
-        tRightThr=tRight[sigRight<maxVal*threshold]
+        if self.isEmpty:
+            self.tRange=0
+            self.sigRange=0
+            return 0
+        else :
+            sig=self.getSIGNAL()
+            t=self.getTOF()
+            maxIdx=np.argmax(sig)
+            maxVal=np.max(sig)
+            
+            sigLeft=sig[0:maxIdx] ; tLeft=t[0:maxIdx]
+            sigRight=sig[maxIdx+1:len(sig)];  tRight=t[maxIdx+1:len(sig)]
+            
+            tLeftThr=tLeft[sigLeft<maxVal*threshold]
+            tRightThr=tRight[sigRight<maxVal*threshold]
 
-        t1=tLeftThr[-1]
-        t2=tRightThr[0]
+            t1=tLeftThr[-1]
+            t2=tRightThr[0]
 
-        idx1=np.argwhere(t==t1)[0][0]
-        idx2=np.argwhere(t==t2)[0][0]        
-        
-        tRange=t[idx1:idx2+1]
-        sigRange=sig[idx1:idx2+1]    
+            idx1=np.argwhere(t==t1)[0][0]
+            idx2=np.argwhere(t==t2)[0][0]        
+            
+            tRange=t[idx1:idx2+1]
+            sigRange=sig[idx1:idx2+1]    
 
-        
-
-
-        ## Calculate Counts
-        counts=np.trapz(sigRange,tRange) /1.6e-19
-        
-        self.tRange=tRange
-        self.sigRange=sigRange
-        return counts
-     
+            ## Calculate Counts
+            counts=np.trapz(sigRange,tRange) /1.6e-19
+            
+            self.tRange=tRange
+            self.sigRange=sigRange
+            return counts
+    #End Region
+    
+    
+    
     def plotSignal(self, showThreshold=True):
         fig, ax = plt.subplots()
         ax.plot(self.getTOF(),self.getSIGNAL(), 'b')
@@ -107,12 +115,12 @@ class tofdata:
     
 if __name__ == '__main__':
     plt.close('all')
-    dataPath='E:/dataAnalysis/tip RPA/20220519/G/TipHorizontalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_0.00E+0deg.txt'
-    # dataPath='zeroData.txt'
-    td=tofdata(dataPath, level_empty_data=False, threshold=0.1)
+    # dataPath='E:/dataAnalysis/tip RPA/20220519/G/TipHorizontalScan/20220519_G_run1/20220519_G_run1_0.00E+0V_0.00E+0deg.txt'
+    dataPath='zeroData.txt'
+    td=tofdata(dataPath, level_empty_data=True, threshold=0.1)
     t=td.getTOF()
     s=td.getSIGNAL()
-    # print(td.getCounts())
+    print(td.getCounts())
     # plt.plot(s)
 
     
