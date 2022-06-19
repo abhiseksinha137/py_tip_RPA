@@ -111,6 +111,7 @@ class tofdata:
         plt.xlabel('TOF (sec)')
         plt.ylabel('Signal (Volts)')
         plt.show()
+        return fig, ax
     
 if __name__ == '__main__':
     plt.close('all')

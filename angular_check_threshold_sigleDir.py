@@ -19,15 +19,24 @@ Angles=settings['Angle'].values
 counts=[]
 theta=2*Angles*pi/180
 zeros=[]
+
+
+threshold=0.05
 for i,fileName in enumerate(fileNames):
     Angle=Angles[i]
     
     fileName=dirPath+fileName
-    td=tofdata(fileName, threshold=0.1)
+    td=tofdata(fileName, threshold=threshold)
     counts.append(td.getCounts())
     if counts[-1]==0:
         zeros.append(Angle)
-        
+    
+    figt, axt = td.plotSignal()
+    plt.figure(figt)
+    plt.xlim(0.75e-6, 1.25e-6)
+    figt.savefig(dirPath+'tofImages/'+ str(Angle)+'.png')   
+    plt.close(figt)
+    print(i)
     
 fig,ax = plt.subplots(subplot_kw={'projection': 'polar'})
 ax.plot(theta, counts, '.')   
