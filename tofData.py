@@ -12,7 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class tofdata:
-    # The class is initialized with the path to the csv file
+    # The class is initialized with the path to the csv file as string, level_empty_data
+    # as boolean whose value is true if you want to make zero an empty signal
+    # Threshold as float is the signal detection threshold.
     def __init__(self, dataPathVal, level_empty_data=True, threshold=0.15):
         self.isEmpty=False
         self.dataPath=dataPathVal

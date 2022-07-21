@@ -11,7 +11,7 @@ import os
 pi=np.pi
 plt.close('all')
 
-dirPath='E:/dataAnalysis/tip RPA/new/20220519/G/TipVerticalScan/20220519_G_run1/'
+dirPath='E:/dataAnalysis/tip RPA/new/20220520/G/TipVerticalScan/20220519_G_run1_5mW_10V/'
 imageSavePath=dirPath+'tofImages/'
 
 try:
@@ -42,12 +42,15 @@ for i,fileName in enumerate(fileNames):
     figt, axt = td.plotSignal()
     plt.figure(figt)
     plt.xlim(0.75e-6, 1.25e-6)
+    #####  Save  ######
     figt.savefig(imageSavePath+ str(Angle)+'.png')   
     plt.close(figt)
     print(i)
     
 fig,ax = plt.subplots(subplot_kw={'projection': 'polar'})
-ax.plot(theta, counts, '.')   
+ax.plot(theta, counts, '.')  
+
+# Legendre Fit 
 
     
     
